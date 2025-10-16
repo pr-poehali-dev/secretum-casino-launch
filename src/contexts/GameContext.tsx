@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
 
 interface GameContextType {
   balance: number;
@@ -22,9 +23,12 @@ export const useGame = () => {
 };
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user, updateBalance: updateAuthBalance } = useAuth();
+  
   const [balance, setBalance] = useState(() => {
+    if (user) return user.balance;
     const saved = localStorage.getItem('casino_balance');
-    return saved ? parseFloat(saved) : 100;
+    return saved ? parseFloat(saved) : 0;
   });
 
   const [tapPower, setTapPower] = useState(() => {
@@ -35,8 +39,18 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const tapCost = 50;
 
   useEffect(() => {
-    localStorage.setItem('casino_balance', balance.toString());
-  }, [balance]);
+    if (user) {
+      updateAuthBalance(balance);
+    } else {
+      localStorage.setItem('casino_balance', balance.toString());
+    }
+  }, [balance, user, updateAuthBalance]);
+  
+  useEffect(() => {
+    if (user) {
+      setBalance(user.balance);
+    }
+  }, [user]);
 
   useEffect(() => {
     localStorage.setItem('tap_power', tapPower.toString());

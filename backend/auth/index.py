@@ -42,13 +42,14 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     
     if method == 'GET' and action == 'google-url':
         redirect_uri = query_params.get('redirect_uri', '')
-        auth_url = f"https://accounts.google.com/o/oauth2/v2/auth?{urlencode({
+        params = {
             'client_id': GOOGLE_CLIENT_ID,
             'redirect_uri': redirect_uri,
             'response_type': 'code',
             'scope': 'email profile',
             'access_type': 'online'
-        })}"
+        }
+        auth_url = f"https://accounts.google.com/o/oauth2/v2/auth?{urlencode(params)}"
         
         return {
             'statusCode': 200,
@@ -62,13 +63,14 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     
     if method == 'GET' and action == 'vk-url':
         redirect_uri = query_params.get('redirect_uri', '')
-        auth_url = f"https://oauth.vk.com/authorize?{urlencode({
+        params = {
             'client_id': VK_CLIENT_ID,
             'redirect_uri': redirect_uri,
             'response_type': 'code',
             'scope': 'email',
             'v': '5.131'
-        })}"
+        }
+        auth_url = f"https://oauth.vk.com/authorize?{urlencode(params)}"
         
         return {
             'statusCode': 200,
@@ -146,12 +148,13 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             user_id = token_response.get('user_id')
             email = token_response.get('email', '')
             
-            api_url = f'https://api.vk.com/method/users.get?{urlencode({
+            api_params = {
                 "user_ids": user_id,
                 "fields": "photo_200",
                 "access_token": access_token,
                 "v": "5.131"
-            })}'
+            }
+            api_url = f'https://api.vk.com/method/users.get?{urlencode(api_params)}'
             
             req = urllib.request.Request(api_url)
             with urllib.request.urlopen(req) as response:

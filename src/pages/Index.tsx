@@ -16,7 +16,6 @@ const Index = () => {
       name: 'CRASH',
       icon: 'Rocket',
       minBet: 30,
-      winChance: '24-34%',
       gradient: 'from-neon-magenta to-purple-600',
       description: 'Ракетка взлетает, множитель растет. Успей забрать до взрыва!'
     },
@@ -25,7 +24,6 @@ const Index = () => {
       name: 'МИНЫ',
       icon: 'Bomb',
       minBet: 10,
-      winChance: '24-34%',
       gradient: 'from-neon-cyan to-blue-600',
       description: 'Открывай клетки и собирай призы. Не попадись на мину!'
     },
@@ -34,9 +32,8 @@ const Index = () => {
       name: 'МОНЕТКА',
       icon: 'Coins',
       minBet: 15,
-      winChance: '24-34%',
       gradient: 'from-neon-gold to-yellow-600',
-      description: 'Орёл или решка? 50 на 50 шанс удвоить ставку!'
+      description: 'Орёл или решка? Удвой свою ставку!'
     }
   ];
 
@@ -257,10 +254,6 @@ const Index = () => {
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Минимальная ставка:</span>
                       <span className="font-bold text-neon-gold">{game.minBet}₽</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Шанс выигрыша:</span>
-                      <span className="font-bold text-neon-cyan">{game.winChance}</span>
                     </div>
                     <Button 
                       className="w-full neon-glow-magenta bg-neon-magenta text-black hover:bg-neon-magenta/80 font-orbitron font-bold"
