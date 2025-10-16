@@ -1,0 +1,30 @@
+{
+  "tests": [
+    {
+      "name": "Get Google auth URL",
+      "method": "GET",
+      "path": "/?action=google-url&redirect_uri=http://localhost:5173/auth/callback",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "url": "string"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Get VK auth URL",
+      "method": "GET",
+      "path": "/?action=vk-url&redirect_uri=http://localhost:5173/auth/callback",
+      "expectedStatus": 200,
+      "expectedBody": {
+        "url": "string"
+      },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Handle OPTIONS request",
+      "method": "OPTIONS",
+      "path": "/",
+      "expectedStatus": 200
+    }
+  ]
+}
