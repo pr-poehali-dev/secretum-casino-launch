@@ -27,45 +27,56 @@
       <script src="https://cdn.poehali.dev/intertnal/js/inspector-min.js"></script>
       <style>
         #pp-watermark, .pp-watermark, [class*="pp-"], [id*="pp-"],
-        a[href*="poehali.dev"], div[style*="poehali"], span[style*="poehali"],
+        a[href*="poehali.dev"], a[href*="Poehali.dev"], 
+        div[style*="poehali"], span[style*="poehali"],
         footer a[href*="poehali"], .watermark, *[data-watermark],
         *[class*="watermark"], *[id*="watermark"], 
-        a[href*="создан"], a[title*="создан"], a[title*="poehali"] {
+        a[href*="создан"], a[title*="создан"], a[title*="poehali"],
+        div:has(img[alt*="poehali"]), div:has(img[alt*="Poehali"]) {
           display: none !important; visibility: hidden !important;
           opacity: 0 !important; width: 0 !important; height: 0 !important;
+          position: absolute !important; left: -9999px !important;
+        }
+        body > div[style*="position: fixed"],
+        body > div[style*="position:fixed"],
+        [style*="z-index: 999"], [style*="z-index:999"],
+        [style*="z-index: 9999"], [style*="z-index:9999"] {
+          opacity: 0 !important;
         }
       </style>
       <script>
         (function() {
           function removeWatermarks() {
             try {
-              var elements = document.querySelectorAll('a, div, span, footer, p');
-              elements.forEach(function(el) {
-                if (!el) return;
-                var text = (el.textContent || '').toLowerCase();
-                var href = (el.getAttribute('href') || '').toLowerCase();
-                var title = (el.getAttribute('title') || '').toLowerCase();
+              document.querySelectorAll('*').forEach(function(el) {
+                if (!el || !el.textContent) return;
+                var text = el.textContent.toLowerCase();
+                var href = (el.getAttribute && el.getAttribute('href') || '').toLowerCase();
+                var alt = (el.getAttribute && el.getAttribute('alt') || '').toLowerCase();
+                var style = (el.getAttribute && el.getAttribute('style') || '').toLowerCase();
                 
                 if ((text.includes('poehali') || text.includes('поехали') || 
-                     text.includes('создан с помощью') || text.includes('создан на') ||
-                     href.includes('poehali') || title.includes('poehali')) &&
-                    el.tagName !== 'TITLE' && el.tagName !== 'META' && el.tagName !== 'SCRIPT' && el.tagName !== 'STYLE') {
-                  el.style.cssText = 'display:none!important;visibility:hidden!important;opacity:0!important;';
+                     text.includes('создан') && (text.includes('poehali') || text.includes('на')) ||
+                     href.includes('poehali') || alt.includes('poehali') ||
+                     style.includes('position') && style.includes('fixed') && el.textContent.includes('Poehali')) &&
+                    el.tagName !== 'HTML' && el.tagName !== 'HEAD' && el.tagName !== 'BODY' &&
+                    el.tagName !== 'TITLE' && el.tagName !== 'META' && 
+                    el.tagName !== 'SCRIPT' && el.tagName !== 'STYLE' && el.id !== 'root') {
+                  el.remove();
                 }
               });
             } catch(e) {}
           }
           
-          if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', removeWatermarks);
-          } else {
-            removeWatermarks();
-          }
-          
+          setInterval(removeWatermarks, 200);
+          window.addEventListener('DOMContentLoaded', removeWatermarks);
           window.addEventListener('load', removeWatermarks);
+          setTimeout(removeWatermarks, 50);
           setTimeout(removeWatermarks, 100);
+          setTimeout(removeWatermarks, 300);
           setTimeout(removeWatermarks, 500);
           setTimeout(removeWatermarks, 1000);
+          setTimeout(removeWatermarks, 2000);
         })();
       </script>
   </head>
