@@ -31,7 +31,26 @@
         [class*="pp-"] { display: none !important; }
         [id*="pp-"] { display: none !important; }
         a[href*="poehali.dev"] { display: none !important; }
+        div[style*="poehali"] { display: none !important; }
+        span[style*="poehali"] { display: none !important; }
+        footer a[href*="poehali"] { display: none !important; }
+        .watermark { display: none !important; }
+        *[data-watermark] { display: none !important; }
       </style>
+      <script>
+        window.addEventListener('DOMContentLoaded', function() {
+          setTimeout(function() {
+            document.querySelectorAll('*').forEach(function(el) {
+              var text = el.textContent || '';
+              if (text.toLowerCase().includes('poehali') || text.toLowerCase().includes('поехали')) {
+                if (el.tagName !== 'TITLE' && el.tagName !== 'META') {
+                  el.style.display = 'none';
+                }
+              }
+            });
+          }, 100);
+        });
+      </script>
   </head>
 
 <body>

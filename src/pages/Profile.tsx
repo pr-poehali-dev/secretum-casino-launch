@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import confetti from 'canvas-confetti';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -87,6 +88,39 @@ const Profile = () => {
                   
                   if (response.ok) {
                     setBalance(data.new_balance);
+                    
+                    if (data.reward >= 1000) {
+                      confetti({
+                        particleCount: 200,
+                        spread: 100,
+                        origin: { y: 0.6 },
+                        colors: ['#FF00FF', '#00FFFF', '#FFD700']
+                      });
+                      setTimeout(() => {
+                        confetti({
+                          particleCount: 100,
+                          angle: 60,
+                          spread: 55,
+                          origin: { x: 0 },
+                          colors: ['#FF00FF', '#00FFFF', '#FFD700']
+                        });
+                        confetti({
+                          particleCount: 100,
+                          angle: 120,
+                          spread: 55,
+                          origin: { x: 1 },
+                          colors: ['#FF00FF', '#00FFFF', '#FFD700']
+                        });
+                      }, 250);
+                    } else {
+                      confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ['#FF00FF', '#00FFFF', '#FFD700']
+                      });
+                    }
+                    
                     toast({ 
                       title: '🎉 Промокод активирован!',
                       description: `+${data.reward}₽ зачислено на баланс`
