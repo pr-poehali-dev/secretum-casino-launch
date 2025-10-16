@@ -16,6 +16,7 @@ const Header = () => {
   const navItems = [
     { path: '/', label: 'Главная', icon: 'Home' },
     { path: '/games', label: 'Игры', icon: 'Gamepad2' },
+    { path: '/tap', label: 'Таполек', icon: 'Coins' },
     { path: '/cases', label: 'Кейсы', icon: 'Package' },
     { path: '/balance', label: 'Пополнение', icon: 'Wallet' },
     { path: '/profile', label: 'Профиль', icon: 'User' },

@@ -14,6 +14,7 @@ import Balance from "./pages/Balance";
 import Profile from "./pages/Profile";
 import Rules from "./pages/Rules";
 import Login from "./pages/Login";
+import TapGame from "./pages/TapGame";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +36,7 @@ const App = () => (
               <Route path="/balance" element={<Balance />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/rules" element={<Rules />} />
+              <Route path="/tap" element={<TapGame />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

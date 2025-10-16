@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -7,6 +8,7 @@ import Icon from '@/components/ui/icon';
 import { toast } from '@/hooks/use-toast';
 
 const Index = () => {
+  const navigate = useNavigate();
   const [balance, setBalance] = useState(1000);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -222,6 +224,13 @@ const Index = () => {
               <div className="bg-card/50 backdrop-blur px-6 py-3 rounded-lg border border-neon-gold/30">
                 <Icon name="Coins" size={24} className="text-neon-gold inline mr-2" />
                 <span className="font-orbitron">МОНЕТКА</span>
+              </div>
+              <div 
+                className="bg-card/50 backdrop-blur px-6 py-3 rounded-lg border border-neon-gold/50 cursor-pointer hover:bg-neon-gold/10 transition-all"
+                onClick={() => navigate('/tap')}
+              >
+                <Icon name="Coins" size={24} className="text-neon-gold inline mr-2" />
+                <span className="font-orbitron">ТАПОЛЕК 🎁</span>
               </div>
             </div>
           </div>

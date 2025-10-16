@@ -26,30 +26,45 @@
     <meta name="pp-name" value="secretum-casino-launch">
       <script src="https://cdn.poehali.dev/intertnal/js/inspector-min.js"></script>
       <style>
-        #pp-watermark { display: none !important; }
-        .pp-watermark { display: none !important; }
-        [class*="pp-"] { display: none !important; }
-        [id*="pp-"] { display: none !important; }
-        a[href*="poehali.dev"] { display: none !important; }
-        div[style*="poehali"] { display: none !important; }
-        span[style*="poehali"] { display: none !important; }
-        footer a[href*="poehali"] { display: none !important; }
-        .watermark { display: none !important; }
-        *[data-watermark] { display: none !important; }
+        #pp-watermark, .pp-watermark, [class*="pp-"], [id*="pp-"],
+        a[href*="poehali.dev"], div[style*="poehali"], span[style*="poehali"],
+        footer a[href*="poehali"], .watermark, *[data-watermark],
+        *[class*="watermark"], *[id*="watermark"], 
+        a[href*="создан"], a[title*="создан"], a[title*="poehali"],
+        div:has(> a[href*="poehali"]), footer:has(> a[href*="poehali"]) {
+          display: none !important; visibility: hidden !important;
+          opacity: 0 !important; width: 0 !important; height: 0 !important;
+        }
       </style>
       <script>
-        window.addEventListener('DOMContentLoaded', function() {
-          setTimeout(function() {
+        (function() {
+          function removeWatermarks() {
             document.querySelectorAll('*').forEach(function(el) {
-              var text = el.textContent || '';
-              if (text.toLowerCase().includes('poehali') || text.toLowerCase().includes('поехали')) {
-                if (el.tagName !== 'TITLE' && el.tagName !== 'META') {
-                  el.style.display = 'none';
-                }
+              var text = (el.textContent || '').toLowerCase();
+              var href = (el.getAttribute('href') || '').toLowerCase();
+              var title = (el.getAttribute('title') || '').toLowerCase();
+              
+              if ((text.includes('poehali') || text.includes('поехали') || 
+                   text.includes('создан с помощью') || text.includes('создан на') ||
+                   href.includes('poehali') || title.includes('poehali')) &&
+                  el.tagName !== 'TITLE' && el.tagName !== 'META' && el.tagName !== 'SCRIPT') {
+                el.style.cssText = 'display:none!important;visibility:hidden!important;opacity:0!important;';
+                el.remove();
               }
             });
-          }, 100);
-        });
+          }
+          
+          removeWatermarks();
+          window.addEventListener('DOMContentLoaded', removeWatermarks);
+          window.addEventListener('load', removeWatermarks);
+          
+          var observer = new MutationObserver(removeWatermarks);
+          observer.observe(document.documentElement, {
+            childList: true, subtree: true, attributes: true, characterData: true
+          });
+          
+          setInterval(removeWatermarks, 500);
+        })();
       </script>
   </head>
 
