@@ -1,10 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import ReCAPTCHA from 'react-google-recaptcha';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Icon from '@/components/ui/icon';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
+
+const RECAPTCHA_SITE_KEY = '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI';
 
 const AUTH_URL = 'https://functions.poehali.dev/26f10c2a-2530-402b-bb12-9af71c320ca4';
 
@@ -12,6 +15,8 @@ const Login = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { login, isAuthenticated } = useAuth();
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -54,6 +59,11 @@ const Login = () => {
   };
 
   const handleGoogleLogin = async () => {
+    if (!captchaToken) {
+      toast({ title: 'Подтвердите капчу', description: 'Пожалуйста, подтвердите, что вы не робот', variant: 'destructive' });
+      return;
+    }
+    
     try {
       const redirectUri = `${window.location.origin}/login`;
       const response = await fetch(`${AUTH_URL}?action=google-url&redirect_uri=${encodeURIComponent(redirectUri)}`);
@@ -68,6 +78,11 @@ const Login = () => {
   };
 
   const handleVKLogin = async () => {
+    if (!captchaToken) {
+      toast({ title: 'Подтвердите капчу', description: 'Пожалуйста, подтвердите, что вы не робот', variant: 'destructive' });
+      return;
+    }
+    
     try {
       const redirectUri = `${window.location.origin}/login`;
       const response = await fetch(`${AUTH_URL}?action=vk-url&redirect_uri=${encodeURIComponent(redirectUri)}`);
@@ -93,10 +108,21 @@ const Login = () => {
           <p className="text-muted-foreground">Войдите, чтобы начать игру</p>
         </div>
 
+        <div className="mb-6 flex justify-center">
+          <ReCAPTCHA
+            ref={recaptchaRef}
+            sitekey={RECAPTCHA_SITE_KEY}
+            onChange={(token) => setCaptchaToken(token)}
+            onExpired={() => setCaptchaToken(null)}
+            theme="dark"
+          />
+        </div>
+
         <div className="space-y-4">
           <Button
             onClick={handleGoogleLogin}
-            className="w-full bg-white hover:bg-gray-100 text-black border-2 border-primary/30 py-6 text-lg"
+            disabled={!captchaToken}
+            className="w-full bg-white hover:bg-gray-100 text-black border-2 border-primary/30 py-6 text-lg disabled:opacity-50"
           >
             <svg className="w-6 h-6 mr-3" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -109,7 +135,8 @@ const Login = () => {
 
           <Button
             onClick={handleVKLogin}
-            className="w-full bg-[#0077FF] hover:bg-[#0066DD] text-white border-2 border-primary/30 py-6 text-lg"
+            disabled={!captchaToken}
+            className="w-full bg-[#0077FF] hover:bg-[#0066DD] text-white border-2 border-primary/30 py-6 text-lg disabled:opacity-50"
           >
             <svg className="w-6 h-6 mr-3" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12.785 16.241s.288-.032.436-.194c.136-.148.132-.427.132-.427s-.02-1.304.574-1.496c.586-.19 1.336 1.26 2.132 1.818.6.419 1.056.327 1.056.327l2.125-.03s1.111-.07.584-.96c-.043-.073-.308-.663-1.588-1.875-1.34-1.27-1.16-1.063.453-3.256.983-1.334 1.374-2.148 1.25-2.496-.117-.332-.842-.244-.842-.244l-2.393.015s-.178-.025-.309.056c-.128.079-.21.263-.21.263s-.377 1.023-.88 1.893c-1.06 1.832-1.484 1.928-1.658 1.813-.404-.267-.303-1.075-.303-1.648 0-1.792.266-2.536-.519-2.729-.26-.064-.452-.106-1.118-.113-.856-.009-1.58.003-1.99.208-.273.137-.483.442-.355.46.158.022.517.099.707.363.246.341.237 1.107.237 1.107s.142 2.11-.33 2.371c-.324.18-.768-.187-1.722-1.862-.488-.854-.857-1.8-.857-1.8s-.071-.178-.198-.273c-.154-.115-.37-.152-.37-.152l-2.274.015s-.342.01-.467.161c-.112.134-.009.41-.009.41s1.773 4.233 3.781 6.364c1.843 1.955 3.937 1.827 3.937 1.827h.949z"/>

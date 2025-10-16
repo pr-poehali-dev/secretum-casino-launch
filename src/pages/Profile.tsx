@@ -1,10 +1,19 @@
+import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import Icon from '@/components/ui/icon';
 import { useGame } from '@/contexts/GameContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from '@/hooks/use-toast';
+
+const PROMO_URL = 'https://functions.poehali.dev/b40fe009-88b9-445e-8989-e0e779c0c6ba';
 
 const Profile = () => {
-  const { balance, tapPower } = useGame();
+  const { balance, tapPower, setBalance } = useGame();
+  const { token } = useAuth();
+  const [promoCode, setPromoCode] = useState('');
+  const [activating, setActivating] = useState(false);
 
   const stats = [
     { label: 'Баланс', value: `${balance.toFixed(2)} ₽`, icon: 'Wallet', color: 'neon-text-gold' },
@@ -34,6 +43,99 @@ const Profile = () => {
             </Card>
           ))}
         </div>
+
+        <Card className="p-8 border-accent/30 neon-glow-gold mb-8">
+          <h3 className="text-2xl font-bold neon-text-gold mb-6 flex items-center">
+            <Icon name="Gift" size={28} className="mr-3" />
+            Промокоды
+          </h3>
+          <p className="text-muted-foreground mb-4">Активируй промокод и получи бонус на баланс!</p>
+          
+          <div className="flex gap-3 mb-6">
+            <Input
+              value={promoCode}
+              onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+              placeholder="Введи промокод"
+              className="text-lg"
+              disabled={activating}
+            />
+            <Button
+              onClick={async () => {
+                if (!promoCode.trim()) {
+                  toast({ title: 'Введи промокод', variant: 'destructive' });
+                  return;
+                }
+                
+                if (!token) {
+                  toast({ title: 'Авторизуйся', description: 'Войди в аккаунт для активации промокода', variant: 'destructive' });
+                  return;
+                }
+                
+                setActivating(true);
+                
+                try {
+                  const response = await fetch(PROMO_URL, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'X-Auth-Token': token
+                    },
+                    body: JSON.stringify({ code: promoCode.trim() })
+                  });
+                  
+                  const data = await response.json();
+                  
+                  if (response.ok) {
+                    setBalance(data.new_balance);
+                    toast({ 
+                      title: '🎉 Промокод активирован!',
+                      description: `+${data.reward}₽ зачислено на баланс`
+                    });
+                    setPromoCode('');
+                  } else {
+                    toast({ 
+                      title: 'Ошибка',
+                      description: data.error || 'Не удалось активировать промокод',
+                      variant: 'destructive'
+                    });
+                  }
+                } catch (error) {
+                  toast({ 
+                    title: 'Ошибка сети',
+                    description: 'Попробуй позже',
+                    variant: 'destructive'
+                  });
+                } finally {
+                  setActivating(false);
+                }
+              }}
+              disabled={activating || !promoCode.trim()}
+              className="bg-accent hover:bg-accent/90 neon-glow-gold text-background whitespace-nowrap"
+            >
+              {activating ? (
+                <Icon name="Loader2" size={20} className="animate-spin" />
+              ) : (
+                <>
+                  <Icon name="Check" size={20} className="mr-2" />
+                  Активировать
+                </>
+              )}
+            </Button>
+          </div>
+          
+          <div className="bg-card/50 rounded-lg p-4 border border-primary/20">
+            <p className="text-sm font-semibold text-foreground mb-2 flex items-center">
+              <Icon name="Info" size={16} className="mr-2 text-accent" />
+              Доступные промокоды:
+            </p>
+            <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+              <p>• Secretum - 54₽</p>
+              <p>• gurmanov - 54₽</p>
+              <p>• ISMAILOV - 30000₽</p>
+              <p>• Tre - 30₽</p>
+            </div>
+          </div>
+        </Card>
 
         <Card className="p-8 border-secondary/30 neon-glow-cyan mb-8">
           <h3 className="text-2xl font-bold neon-text-cyan mb-6">История операций</h3>

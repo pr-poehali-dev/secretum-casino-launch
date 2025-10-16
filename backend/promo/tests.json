@@ -1,0 +1,22 @@
+{
+  "tests": [
+    {
+      "name": "Handle OPTIONS request",
+      "method": "OPTIONS",
+      "path": "/",
+      "expectedStatus": 200
+    },
+    {
+      "name": "Activate promo without token",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "code": "Secretum"
+      },
+      "expectedStatus": 401,
+      "expectedBody": {
+        "error": "Missing auth token"
+      }
+    }
+  ]
+}
